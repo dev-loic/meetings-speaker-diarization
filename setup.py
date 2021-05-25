@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
     content = f.readlines()
 requirements = [x.strip() for x in content if 'git+' not in x]
 
-setup(name='meetings-speaker-diarization',
+setup(name='msd',
       version="1.0",
       description="Project Description",
       packages=find_packages(),
@@ -13,5 +13,8 @@ setup(name='meetings-speaker-diarization',
       test_suite='tests',
       # include_package_data: to install data from MANIFEST.in
       include_package_data=True,
-      scripts=['scripts/meetings-speaker-diarization-run'],
+      scripts=['scripts/msd-run'],
+      package_data={
+        "": ["data/*.pt"]
+      },
       zip_safe=False)

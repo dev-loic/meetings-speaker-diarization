@@ -2,14 +2,16 @@ import torch
 import torchaudio
 from spectralcluster import SpectralClusterer
 import numpy as np
+import os
 
 class SpeakerDiarizer:
   
-  # Attributes
-  wav2mel = torch.jit.load("data/pretrained_models/wav2mel.pt")
-  dvector = torch.jit.load("data/pretrained_models/dvector-step250000.pt").eval()
-  
   def __init__(self):
+    this_dir, _ = os.path.split(__file__)
+    wav2mel_model_path = os.path.join(this_dir, "data", "wav2mel.pt")
+    self.wav2mel = torch.jit.load(wav2mel_model_path)
+    dvector_model_path = os.path.join(this_dir, "data", "dvector-step250000.pt")
+    self.dvector = torch.jit.load(dvector_model_path).eval()
     self.sample_rate = None
     self.wav_tensor = None
     self.emb_tensor = None

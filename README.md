@@ -41,7 +41,7 @@ Functionnal test with a script:
 cd
 mkdir tmp
 cd tmp
-meetings-speaker-diarization-run
+msd-run
 ```
 
 # Install
@@ -70,5 +70,5 @@ Functionnal test with a script:
 cd
 mkdir tmp
 cd tmp
-meetings-speaker-diarization-run
+msd-run
 ```
