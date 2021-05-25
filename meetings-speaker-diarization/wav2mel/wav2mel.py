@@ -1,5 +1,5 @@
 """
-  This code is fully based on this work https://github.com/yistLin/dvector. Thanks 🙏🏻
+  This code is fully based on this work https://github.com/yistLin/dvector. Thanks A LOT 🙏🏻
   Wav2Mel for processing audio data.
 """
 
@@ -21,7 +21,7 @@ class Wav2Mel(nn.Module):
         fft_window_ms: float = 25.0,
         fft_hop_ms: float = 10.0,
         f_min: float = 50.0,
-        n_mels: int = 40,
+        n_mels: int = 40
     ):
         super().__init__()
 
@@ -52,8 +52,8 @@ class SoxEffects(nn.Module):
         self,
         sample_rate: int,
         norm_db: float,
-        sil_threshold: float,
-        sil_duration: float,
+        silence_threshold: float,
+        silence_duration: float
     ):
         super().__init__()
         self.effects = [
@@ -63,12 +63,12 @@ class SoxEffects(nn.Module):
             [
                 "silence",
                 "1",
-                f"{sil_duration}",
-                f"{sil_threshold}%",
+                f"{silence_threshold}",
+                f"{silence_duration}%",
                 "-1",
-                f"{sil_duration}",
-                f"{sil_threshold}%",
-            ],  # remove silence throughout the file
+                f"{silence_threshold}",
+                f"{silence_duration}%",
+            ]  # remove silence throughout the file
         ]
 
     def forward(self, wav_tensor: torch.Tensor, sample_rate: int) -> torch.Tensor:
@@ -85,7 +85,7 @@ class LogMelspectrogram(nn.Module):
         fft_window_ms: float,
         fft_hop_ms: float,
         f_min: float,
-        n_mels: int,
+        n_mels: int
     ):
         super().__init__()
         self.melspectrogram = MelSpectrogram(
@@ -93,7 +93,7 @@ class LogMelspectrogram(nn.Module):
             hop_length=int(sample_rate * fft_hop_ms / 1000),
             n_fft=int(sample_rate * fft_window_ms / 1000),
             f_min=f_min,
-            n_mels=n_mels,
+            n_mels=n_mels
         )
 
     def forward(self, wav_tensor: torch.Tensor) -> torch.Tensor:
