@@ -21,16 +21,19 @@ class SpeakerDiarizer:
   def generate_dvectors(self):
     # nb_windows = audio without silence / frame_rate
     mel_tensor = self.wav2mel(self.wav_tensor, self.sample_rate)  # shape: (nb_windows, n_mels)
-    emb_tensor = self.dvector.embed_utterance(mel_tensor)  # shape: (emb_dim)
+    emb_tensor = self.dvector.embed_utterances(mel_tensor)  # shape: (emb_dim)
     
     self.emb_tensor = emb_tensor
     
-  def spectral_clustering(self):
+  def spectral_clustering(self, min_clusters=1, max_clusters = 100, p_percentile=0.95, gaussian_blur_sigma=1):
     
-    clusterer = SpectralClusterer(min_clusters=1,
-                                  max_clusters=100,
-                                  p_percentile=0.95,
-                                  gaussian_blur_sigma=1)
+    """
+    Convert the embedded the d vector from segmentation to a similarity matrix that ouput labels for each segments   
+    """
+    clusterer = SpectralClusterer(min_clusters,
+                                  max_clusters,
+                                  p_percentile,
+                                  gaussian_blur_sigma)
     embedded_input = []
     
     for i in range(len(self.emb_tensor)):
