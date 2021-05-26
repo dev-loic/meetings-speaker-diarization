@@ -5,10 +5,10 @@ install_requirements:
 	@pip install -r requirements.txt
 
 check_code:
-	@flake8 scripts/* meetings-speaker-diarization/*.py
+	@flake8 scripts/* msd/*.py
 
 black:
-	@black scripts/* meetings-speaker-diarization/*.py
+	@black scripts/* msd/*.py
 
 test:
 	@coverage run -m pytest tests/*.py
@@ -22,8 +22,8 @@ clean:
 	@rm -f .coverage
 	@rm -fr */__pycache__ */*.pyc __pycache__
 	@rm -fr build dist
-	@rm -fr meetings-speaker-diarization-*.dist-info
-	@rm -fr meetings-speaker-diarization.egg-info
+	@rm -fr msd-*.dist-info
+	@rm -fr msd.egg-info
 
 install:
 	@pip install . -U
