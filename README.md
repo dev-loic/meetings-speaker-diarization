@@ -1,3 +1,8 @@
+# Sources
+- https://github.com/pyannote/pyannote-audio
+- https://github.com/pyannote/pyannote-audio-hub#speaker-diarization
+- https://colab.research.google.com/github/pyannote/pyannote-audio/blob/master/notebooks/introduction_to_pyannote_audio_speaker_diarization_toolkit.ipynb#scrollTo=f5u8wRm3GYFr
+
 # Data analysis
 - Document here the project: meetings-speaker-diarization
 - Description: Project Description
