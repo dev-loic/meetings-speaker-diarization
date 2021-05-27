@@ -1,50 +1,32 @@
 import torch
-import torchaudio
-from spectralcluster import SpectralClusterer
-from msd.Wav2Mel import Wav2Mel
-import numpy as np
-import os
+from pyannote.database.util import load_rttm
+from pyannote.core import Segment, notebook
+from pyannote.metrics.diarization import DiarizationErrorRate
 
-class SpeakerDiarizer:
-  
-  def __init__(self):
-    this_dir, _ = os.path.split(__file__)
-    dvector_model_path = os.path.join(this_dir, "data", "dvector-step250000.pt")
-    self.dvector = torch.jit.load(dvector_model_path).eval()
-    self.wav2mel = torch.jit.script(Wav2Mel())
-    self.sample_rate = None
-    self.wav_tensor = None
-    self.emb_tensor = None
-    self.speaker_label = None
-  
-  def load(self, audio_file_path):
-    self.wav_tensor, self.sample_rate = torchaudio.load(audio_file_path)
-  
-  def generate_dvectors(self):
-    # nb_windows = audio without silence / frame_rate
-    mel_tensor = self.wav2mel(self.wav_tensor, self.sample_rate)  # shape: (nb_windows, n_mels)
-    # Use embed_utterances with a list for multiple mel_tensors
-    emb_tensor = self.dvector.embed_utterance(mel_tensor)  # shape: (emb_dim)
+class SpeakerDiarizer():
     
-    self.emb_tensor = emb_tensor
-    
-  def spectral_clustering(self, min_clusters=1, max_clusters = 100, p_percentile=0.95, gaussian_blur_sigma=1):
-    
-    """
-    Convert the embedded the d vector from segmentation to a similarity matrix that ouput labels for each segments   
-    """
-    clusterer = SpectralClusterer(min_clusters,
-                                  max_clusters,
-                                  p_percentile,
-                                  gaussian_blur_sigma)
-    embedded_input = []
-    
-    for i in range(len(self.emb_tensor)):
+    def __init__(self,name_pipe):
+        self.pipeline = torch.hub.load('pyannote/pyannote-audio', name_pipe)
+        self.diarization = None
+        self.der = None
+        self.current_filename = None
 
-      embedded_input.append(self.emb_tensor[i].detach().numpy())
-      
-    embedded_input = np.array(embedded_input)
+    def apply_diarizer(self,file_name):
+        # apply diarization pipeline on your audio file
+        self.diarization = self.pipeline({'audio' : file_name})
+        self.current_filename = file_name
     
-    speaker_label = clusterer.predict(embedded_input)
+    def write_rttm(self,path_outputs):
+        with open(path_outputs, 'w') as f:
+            self.diarization.write_rttm(f)
     
-    self.speaker_label = speaker_label
+    def print_outputs(self):
+        for turn, _, speaker in self.diarization.itertracks(yield_label=True):
+            print(f'Speaker "{speaker}" speaks between t={turn.start:.1f}s and t={turn.end:.1f}s.')
+            
+    def score(self,path_reference):
+        reference = load_rttm(path_reference)
+        reference = reference[list(reference.keys())[0]]
+        metric = DiarizationErrorRate()
+        self.der = metric(reference=reference, hypothesis=self.diarization,detailed=True)
+        print(self.der)

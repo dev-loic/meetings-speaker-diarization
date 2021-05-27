@@ -8,3 +8,4 @@ test_tensors (2).pt:Zone.Identifier
 test_tensors.pt
 test_tensors.pt:Zone.Identifier
 .env
+**/*.egg*
