@@ -30,3 +30,15 @@ six>=1.14
 joblib
 memoized-property
 termcolor
+
+# pyannote
+pyannote.audio
+pyannote.database
+pyannote.core
+
+#audio
+pydub
+ffmpeg
+
+#azure
+azure.cognitiveservices.speech
