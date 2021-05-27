@@ -24,7 +24,7 @@ class SpeakerAward():
             t2 = (segment.start+segment.duration) * 1000
             newAudio = audio_wave[t1:t2]
             newAudio.export(f"temp.wav", format="wav")
-            audio_config = speechsdk.audio.AudioConfig(filename=f"temp.wav")
+            audio_config = speechsdk.audio.AudioConfig(filename="temp.wav")
             speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
             result = speech_recognizer.recognize_once_async().get()
             self.json_outputs.append({'speaker':label,
