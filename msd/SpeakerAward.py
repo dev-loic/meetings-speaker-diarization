@@ -32,4 +32,4 @@ class SpeakerAward():
                                       'end':time.strftime("%H:%M:%S",time.gmtime(segment.start+segment.duration)),
                                       'text':result.text})
         os.remove("temp.wav")
-        return json.dumps(self.json_outputs)
+        return self.json_outputs
