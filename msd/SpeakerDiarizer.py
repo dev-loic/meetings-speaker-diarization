@@ -9,10 +9,12 @@ class SpeakerDiarizer():
         self.pipeline = torch.hub.load('pyannote/pyannote-audio', name_pipe)
         self.diarization = None
         self.der = None
+        self.current_filename = None
 
     def apply_diarizer(self,file_name):
         # apply diarization pipeline on your audio file
         self.diarization = self.pipeline({'audio' : file_name})
+        self.current_filename = file_name
     
     def write_rttm(self,path_outputs):
         with open(path_outputs, 'w') as f:

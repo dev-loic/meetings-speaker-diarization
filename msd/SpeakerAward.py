@@ -1,10 +1,15 @@
 import json
 import azure.cognitiveservices.speech as speechsdk
+from azure.cognitiveservices.speech import audio
 from dotenv import load_dotenv
 import os
-from pydub import AudioSegment
+import pydub
+import time
 
 class SpeakerAward():
+    
+    #Attributes
+    speech_config = speechsdk.SpeechConfig(subscription=os.getenv('AZURE_API_KEY'), region="francecentral", speech_recognition_language = 'en-US')
     
     def __init__(self,diarizer):
         self.diarizer = diarizer
@@ -13,23 +18,18 @@ class SpeakerAward():
     def get_json(self):
         load_dotenv()
         self.json_outputs = []
-        i = 0
+        audio_wave = pydub.AudioSegment.from_wav(self.diarizer.current_filename)
         for segment, _, label in self.diarizer.diarization.itertracks(yield_label=True):
-            start = segment.start
-            end = start + segment.duration
-            speaker = label
-            self.json_outputs.append({'speaker':speaker,'start':start,'end':end})
-            i+=1
-        speech_config = speechsdk.SpeechConfig(subscription=os.getenv('AZURE_API_KEY'), region="francecentral", speech_recognition_language = 'en-US')
-        for i in range(len(self.json_outputs)):
-            t1 = self.json_outputs[i]['start'] * 1000 #Works in milliseconds
-            t2 = self.json_outputs[i]['end'] * 1000
-            newAudio = AudioSegment.from_wav("data/martin2.wav")
-            newAudio = newAudio[t1:t2]
-            newAudio.export(f"outputs/batches_videos/temp.wav", format="wav")
-            audio_config = speechsdk.audio.AudioConfig(filename=f"outputs/batches_videos/temp.wav")
-            speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
+            t1 = segment.start * 1000 #Works in milliseconds
+            t2 = (segment.start+segment.duration) * 1000
+            newAudio = audio_wave[t1:t2]
+            newAudio.export(f"temp.wav", format="wav")
+            audio_config = speechsdk.audio.AudioConfig(filename=f"temp.wav")
+            speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
             result = speech_recognizer.recognize_once_async().get()
-            self.json_outputs[i]['text']=result.text #Exports to a wav file in the current path.
-        os.remove("outputs/batches_videos/temp.wav")
+            self.json_outputs.append({'speaker':label,
+                                      'start':time.strftime("%H:%M:%S",time.gmtime(segment.start)),
+                                      'end':time.strftime("%H:%M:%S",time.gmtime(segment.start+segment.duration)),
+                                      'text':result.text})
+        os.remove("temp.wav")
         return json.dumps(self.json_outputs)
