@@ -5,21 +5,31 @@ from dotenv import load_dotenv
 import os
 import pydub
 import time
+from msd.SpeakerDiarizer import SpeakerDiarizer
+import torch
 
-class SpeakerAward():
+class SpeakerAward(SpeakerDiarizer):
+    
+    load_dotenv()
     
     #Attributes
     speech_config = speechsdk.SpeechConfig(subscription=os.getenv('AZURE_API_KEY'), region="francecentral", speech_recognition_language = 'en-US')
     
-    def __init__(self,diarizer):
-        self.diarizer = diarizer
+    def __init__(self, name_pipe):
+        # , pipeline, diarization, der, current_filename
+    
         self.json_outputs = None
-
+        super().__init__(name_pipe)
+        self.pipeline = torch.hub.load('pyannote/pyannote-audio', self.name_pipe)
+        self.diarization = None
+        self.der = None
+        self.current_filename = None          
+        
     def get_json(self):
-        load_dotenv()
+
         self.json_outputs = []
-        audio_wave = pydub.AudioSegment.from_wav(self.diarizer.current_filename)
-        for segment, _, label in self.diarizer.diarization.itertracks(yield_label=True):
+        audio_wave = pydub.AudioSegment.from_wav(self.current_filename)
+        for segment, _, label in self.diarization.itertracks(yield_label=True):
             t1 = segment.start * 1000 #Works in milliseconds
             t2 = (segment.start+segment.duration) * 1000
             newAudio = audio_wave[t1:t2]
