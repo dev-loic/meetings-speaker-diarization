@@ -59,3 +59,12 @@ pypi_test:
 
 pypi:
 	@twine upload dist/* -u $(PYPI_USERNAME)
+
+
+
+# ----------------------------------
+#       PRODUCTION 
+# ----------------------------------
+
+run_api:
+	uvicorn api.api:app --reload  # load web server with code autoreload

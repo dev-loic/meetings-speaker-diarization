@@ -2,10 +2,9 @@
 .vscode/
 Spectral_clustering_exploration.ipynb
 Test_pipeline.ipynb
-meetings-speaker-diarization/Untitled.ipynb
-msd/__pycache__/
-test_tensors (2).pt:Zone.Identifier
+**/Untitled.ipynb
 test_tensors.pt
-test_tensors.pt:Zone.Identifier
+*:Zone.Identifier
 .env
 **/*.egg*
+**/__pycache__/*
