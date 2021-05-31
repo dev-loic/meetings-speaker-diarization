@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import pytz
-from msd.apitest import test
 from google.cloud import storage
 from msd.SpeakerDiarizer import SpeakerDiarizer
 from msd.SpeakerAward import SpeakerAward
