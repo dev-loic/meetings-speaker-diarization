@@ -1,3 +1,11 @@
 steps:
 - name: "eu.gcr.io/le-wagon-data-589/msd-deploy/diarizer-deploy"
+  args: ['app', 'deploy']
+  timeout: 3600s
 timeout: 3600s
+
+# steps:
+# - name: 'gcr.io/cloud-builders/gcloud'
+#   args: ['app', 'deploy']
+#   timeout: 1200s
+# timeout: 1200s
