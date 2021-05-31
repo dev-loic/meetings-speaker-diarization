@@ -6,5 +6,6 @@ COPY requirements.txt /requirements.txt
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+RUN sudo apt-get install libsndfile1
 
 CMD uvicorn api.api:app --host 0.0.0.0 --port $PORT
