@@ -1,0 +1,3 @@
+steps:
+- name: "eu.gcr.io/le-wagon-data-589/msd-deploy/diarizer-deploy"
+timeout: 3600s
