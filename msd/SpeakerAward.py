@@ -1,16 +1,11 @@
-import json
 import azure.cognitiveservices.speech as speechsdk
 from azure.cognitiveservices.speech import audio
 from dotenv import load_dotenv
 import os
-import pydub
 import time
 from msd.SpeakerDiarizer import SpeakerDiarizer
-import torch
 
 class SpeakerAward(SpeakerDiarizer):
-    
-    load_dotenv()
     
     #Attributes
     load_dotenv()
@@ -21,7 +16,6 @@ class SpeakerAward(SpeakerDiarizer):
         super().__init__(name_pipe)   
         
     def get_json(self):
-        self.profils = self.profil_paths
         self.json_outputs = []
         for segment, _, label in self.diarization.itertracks(yield_label=True):
             t1 = segment.start * 1000 #Works in milliseconds
@@ -35,13 +29,11 @@ class SpeakerAward(SpeakerDiarizer):
                                       'start':time.strftime("%H:%M:%S",time.gmtime(segment.start)),
                                       'end':time.strftime("%H:%M:%S",time.gmtime(segment.start+segment.duration)),
                                       'text':result.text})
-        for count,profil in enumerate(self.profils):
+        for count,profil in enumerate(self.profil_paths):
             name = profil.split("/")[-1][:-4]
-            speaker_letter = self.json_outputs[len(self.profils) - count - 1]['speaker']
+            speaker_letter = self.json_outputs[len(self.profil_paths) - count - 1]['speaker']
             for segment in self.json_outputs:
                 if segment['speaker'] == speaker_letter :
                     segment['speaker'] = name
-        for i in range(len(self.profils)):
-            del self.json_outputs[i]
         os.remove("temp.wav")
-        return self.json_outputs
+        return self.json_outputs[len(self.profil_paths):]

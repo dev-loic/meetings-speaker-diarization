@@ -3,6 +3,7 @@ from pyannote.database.util import load_rttm
 from pyannote.core import Segment, notebook
 from pyannote.metrics.diarization import DiarizationErrorRate
 import pydub
+import os
 
 class SpeakerDiarizer():
     
@@ -25,6 +26,7 @@ class SpeakerDiarizer():
             self.audio_profiles = profil_wav[:] + self.audio_profiles[:]
         self.audio_profiles.export("avecprofil.wav", format="wav")
         self.diarization = self.pipeline({'audio' : "avecprofil.wav"})
+        os.remove("avecprofil.wav")
     
     def write_rttm(self,path_outputs):
         with open(path_outputs, 'w') as f:
