@@ -31,8 +31,8 @@ class SpeakerAward(SpeakerDiarizer):
             speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
             result = speech_recognizer.recognize_once_async().get()
             self.json_outputs.append({'speaker':label,
-                                      'start': time.strftime("%H:%M:%S",time.gmtime((t1-self.time_to_sub)/1000)),
-                                      'end': time.strftime("%H:%M:%S",time.gmtime((t2-self.time_to_sub)/1000)),
+                                      'start': time.strftime("%H:%M:%S",time.gmtime(t1/1000-self.time_to_sub)),
+                                      'end': time.strftime("%H:%M:%S",time.gmtime(t2/1000-self.time_to_sub)),
                                       'text':result.text})
         for count,profil in enumerate(self.profil_paths):
             name = profil.split("/")[-1][:-4]
