@@ -22,7 +22,7 @@ class SpeakerDiarizer():
         # apply diarization pipeline on your audio file
         self.current_filename = pydub.AudioSegment.from_wav(file_name)
         if self.current_filename.duration_seconds < 180:
-            self.audio_profiles = self.current_filename * (180/self.current_filename.duration_seconds)
+            self.audio_profiles = self.current_filename * int(180/self.current_filename.duration_seconds+1)
         else :
             self.audio_profiles = self.current_filename
         self.profil_paths = profil_paths
