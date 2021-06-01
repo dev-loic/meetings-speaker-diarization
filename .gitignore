@@ -8,3 +8,5 @@ test_tensors.pt
 .env
 **/*.egg*
 **/__pycache__/*
+notebooks/martin/data/*.wav
+notebooks/martin/outputs/*.rttm
