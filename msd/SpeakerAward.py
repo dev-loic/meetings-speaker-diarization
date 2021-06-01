@@ -29,6 +29,8 @@ class SpeakerAward(SpeakerDiarizer):
             audio_config = speechsdk.audio.AudioConfig(filename="temp.wav")
             speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
             result = speech_recognizer.recognize_once_async().get()
+            if result.text == "":
+                continue
             self.json_outputs.append({'speaker':label,
                                       'start': time.strftime("%H:%M:%S",time.gmtime(t1/1000-self.time_to_sub)),
                                       'end': time.strftime("%H:%M:%S",time.gmtime(t2/1000-self.time_to_sub)),
@@ -36,11 +38,8 @@ class SpeakerAward(SpeakerDiarizer):
         for count,profil in enumerate(self.profil_paths):
             name = profil.split("/")[-1][:-4]
             speaker_letter = self.json_outputs[len(self.profil_paths) - count - 1]['speaker']
-            for index,segment in enumerate(self.json_outputs):
+            for segment in self.json_outputs[len(self.profil_paths):]:
                 if segment['speaker'] == speaker_letter :
                     segment['speaker'] = name
-                if segment['text']=="":
-                    del self.json_outputs[index]
-                    index-=1
         os.remove("temp.wav")
         return self.json_outputs[len(self.profil_paths):]
