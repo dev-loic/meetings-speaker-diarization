@@ -55,12 +55,12 @@ def label_speakers(id, background_tasks: BackgroundTasks, file: UploadFile = Fil
     return { 'Succeed': 'OK' }
 
 def diarize(id, file_name):
-    print('[START] Diarizer instanciation')
+    print('[START] Diarizer instanciation 🛠')
     diarizer = SpeakerAward("dia")
-    print('[END] Diarizer instanciation')
-    print('[START] Diarize')
+    print('[END] Diarizer instanciation 🛠')
+    print('[START] Diarize ⚡️⚡️')
     diarizer.apply_diarizer(file_name)
-    print('[END] Diarize')
+    print('[END] Diarize ⚡️⚡️')
     json = diarizer.get_json()
     print('[START] Saving to the cloud ☁️')
     save_to_cloud(id, json)
