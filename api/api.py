@@ -1,10 +1,11 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from google.cloud import storage
 from msd.SpeakerAward import SpeakerAward
 import shutil
 import ffmpeg
 import os
+import json
 
 app = FastAPI()
 
@@ -47,29 +48,46 @@ def diarize(id):
     
     diarizer.apply_diarizer(input_file)
     
-
     json_output = diarizer.get_json()
 
     return json_output
 
-@app.post("/diarizeMeeting")
-def diarize(id, file: UploadFile = File(...)):    
+@app.post("/speakersLabeling")
+def label_speakers(id, background_tasks: BackgroundTasks, file: UploadFile = File(...)):    
     
     # Convert opus to wav
-    with open("test.opus", "wb") as buffer:
+    with open('output.opus', 'wb') as buffer:
         shutil.copyfileobj(file.file, buffer)
     
-    with open("output.wav", "wb"):
-        stream = ffmpeg.input("test.opus")
+    with open('output.wav', 'wb'):
+        stream = ffmpeg.input('output.opus')
         stream = ffmpeg.output(stream, 'output.wav')
         ffmpeg.overwrite_output(stream).run()
 
     # Diarize
-    """ TODO: (Loic Saillant) 2021/06/01 Implement diarizing part asynchronously """
-    # diarizer = SpeakerAward("dia")
-    # diarizer.apply_diarizer('output.wav')
+    background_tasks.add_task(diarize, id, 'output.wav')
     
-    # Clean
-    os.remove('test.opus')
-    os.remove('output.wav')
     return { 'Succeed': 'OK' }
+
+def diarize(id, file_name):
+    diarizer = SpeakerAward("dia")
+    diarizer.apply_diarizer(file_name)
+    json = diarizer.get_json()
+    save_to_cloud(id, json)
+
+    # Clean
+    os.remove('output.opus')
+    os.remove('output.wav')
+    
+def save_to_cloud(id, jsonData):
+    file_name = f'{id}.json'
+    
+    with open(file_name, 'w') as json_file:
+        json_file.write(json.dumps(jsonData))
+    
+    storage_client = storage.Client()
+    bucket = storage_client.bucket('wagon-data-589-vigouroux')
+    blob = bucket.blob(f'results/{file_name}')
+    blob.upload_from_filename(file_name)
+   
+    os.remove(file_name)
