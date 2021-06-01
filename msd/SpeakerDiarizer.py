@@ -7,7 +7,8 @@ import os
 class SpeakerDiarizer():
     
     #Attributes
-    testing_paths=["data/Martin.wav","data/Loïc.wav","data/Yoann.wav"]
+    path_data = os.path.join(os.path.dirname(__file__), 'data/')
+    testing_paths=[f"{path_data}Martin.wav",f"{path_data}Loïc.wav",f"{path_data}Yoann.wav"]
     
     def __init__(self,name_pipe):
         self.name_pipe = name_pipe
