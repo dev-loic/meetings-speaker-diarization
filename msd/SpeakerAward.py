@@ -36,7 +36,7 @@ class SpeakerAward(SpeakerDiarizer):
         for count,profil in enumerate(self.profil_paths):
             name = profil.split("/")[-1][:-4]
             speaker_letter = self.json_outputs[len(self.profil_paths) - count - 1]['speaker']
-            for index,segment in enumerate(self.json_outputs[len(self.profil_paths):]):
+            for index,segment in enumerate(self.json_outputs):
                 if segment['speaker'] == speaker_letter :
                     segment['speaker'] = name
                 if segment['text']=="":
