@@ -35,6 +35,7 @@ memoized-property
 termcolor
 ffmpeg-python
 pytest-shutil
+python-multipart
 
 # pyannote
 pyannote.audio
