@@ -1,11 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-import pandas as pd
-import pytz
 from google.cloud import storage
-from msd.SpeakerDiarizer import SpeakerDiarizer
 from msd.SpeakerAward import SpeakerAward
-import json
+import shutil
+import ffmpeg
+import os
 
 app = FastAPI()
 
@@ -52,3 +51,25 @@ def diarize(id):
     json_output = diarizer.get_json()
 
     return json_output
+
+@app.post("/diarizeMeeting")
+def diarize(id, file: UploadFile = File(...)):    
+    
+    # Convert opus to wav
+    with open("test.opus", "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    with open("output.wav", "wb"):
+        stream = ffmpeg.input("test.opus")
+        stream = ffmpeg.output(stream, 'output.wav')
+        ffmpeg.overwrite_output(stream).run()
+
+    # Diarize
+    """ TODO: (Loic Saillant) 2021/06/01 Implement diarizing part asynchronously """
+    # diarizer = SpeakerAward("dia")
+    # diarizer.apply_diarizer('output.wav')
+    
+    # Clean
+    os.remove('test.opus')
+    os.remove('output.wav')
+    return { 'Succeed': 'OK' }
