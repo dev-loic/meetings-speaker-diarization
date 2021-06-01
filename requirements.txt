@@ -34,7 +34,7 @@ joblib
 memoized-property
 termcolor
 ffmpeg-python
-shutil
+pytest-shutil
 
 # pyannote
 pyannote.audio

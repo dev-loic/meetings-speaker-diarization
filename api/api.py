@@ -21,7 +21,7 @@ app.add_middleware(
 def index():
     
     return {
-        "greetings" : "This is our root endpoint!"
+        "greetings" : "Version du 01/06/2021"
     }
     
 
@@ -37,21 +37,6 @@ def get_file(bucket_name, file_name):
     
     return local_file
     
-@app.get("/diarize")
-def diarize(id):
-    
-    get_file("wagon-data-589-vigouroux", id)
-    
-    input_file = id
-    
-    diarizer = SpeakerAward("dia")
-    
-    diarizer.apply_diarizer(input_file)
-    
-    json_output = diarizer.get_json()
-
-    return json_output
-
 @app.post("/speakersLabeling")
 def label_speakers(id, background_tasks: BackgroundTasks, file: UploadFile = File(...)):    
     
