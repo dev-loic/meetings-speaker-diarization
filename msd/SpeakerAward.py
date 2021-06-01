@@ -1,5 +1,4 @@
 import azure.cognitiveservices.speech as speechsdk
-from azure.cognitiveservices.speech import audio
 from dotenv import load_dotenv
 import os
 import time
