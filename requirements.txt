@@ -44,7 +44,6 @@ pyannote.core
 
 #audio
 pydub
-ffmpeg
 wave
 
 #azure
