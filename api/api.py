@@ -97,3 +97,12 @@ def save_to_cloud(id, jsonData):
     blob.upload_from_filename(file_name)
    
     os.remove(file_name)
+
+@app.get("/speakersLabeling")
+def get_speakers_labels(id):
+    storage_client = storage.Client()
+    bucket = storage_client.bucket('wagon-data-589-vigouroux')
+    blob = bucket.blob(f'results/{id}.json')
+    jsonData = blob.download_as_string(client=None)
+    
+    return { 'data': json.loads(jsonData) }
