@@ -28,7 +28,10 @@ def index():
 @app.get("/getfile")
 def get_file(bucket_name, file_name):
     
-    storage_client = storage.Client()
+    storage_client = storage.Client.from_service_account_json(
+        'docker-key.json')
+
+    # storage_client = storage.Client()
     
     bucket = storage_client.bucket(bucket_name)
     
@@ -43,16 +46,25 @@ def label_speakers(id, background_tasks: BackgroundTasks, file: UploadFile = Fil
     # Convert opus to wav
     with open('output.opus', 'wb') as buffer:
         shutil.copyfileobj(file.file, buffer)
+        
+    print("shutil.copyfileobj has been executed")
     
     with open('output.wav', 'wb'):
         stream = ffmpeg.input('output.opus')
         stream = ffmpeg.output(stream, 'output.wav')
         ffmpeg.overwrite_output(stream).run()
+        
+    print("overwrite_output has been executed")
 
     # Diarize
-    background_tasks.add_task(diarize, id, 'output.wav') #Remplacer par un call de fonction basique?
+    background_tasks.add_task(diarize, id, 'output.wav')
+    
+    print("background_tasks has been started")
     
     return { 'Succeed': 'OK' }
+
+def foo(id, file_name):
+    print("bar")
 
 def diarize(id, file_name):
     print('[START] Diarizer instanciation')
@@ -67,16 +79,20 @@ def diarize(id, file_name):
     print('[END] Saving to the cloud ☁️')
 
     # Clean
-    os.remove('output.opus')
-    os.remove('output.wav')
+    # os.remove('output.opus')
+    # os.remove('output.wav')
     
 def save_to_cloud(id, jsonData):
     file_name = f'{id}.json'
     
     with open(file_name, 'w') as json_file:
         json_file.write(json.dumps(jsonData))
+        
+    storage_client = storage.Client.from_service_account_json(
+        'docker-key.json')
+
     
-    storage_client = storage.Client()
+    # storage_client = storage.Client()
     bucket = storage_client.bucket('wagon-data-589-vigouroux')
     blob = bucket.blob(f'results/{file_name}')
     blob.upload_from_filename(file_name)
@@ -85,7 +101,11 @@ def save_to_cloud(id, jsonData):
 
 @app.get("/speakersLabeling")
 def get_speakers_labels(id):
-    storage_client = storage.Client()
+    
+    storage_client = storage.Client.from_service_account_json(
+        'docker-key.json')
+
+    # storage_client = storage.Client()
     bucket = storage_client.bucket('wagon-data-589-vigouroux')
     blob = bucket.blob(f'results/{id}.json')
     jsonData = blob.download_as_string(client=None)

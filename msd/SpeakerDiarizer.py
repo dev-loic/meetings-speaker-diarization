@@ -12,7 +12,7 @@ class SpeakerDiarizer():
     
     def __init__(self,name_pipe):
         self.name_pipe = name_pipe
-        self.pipeline = torch.hub.load('pyannote/pyannote-audio', self.name_pipe)
+        self.pipeline = torch.hub.load('../pyannote-audio-master', self.name_pipe, source="local")
         self.diarization = None
         self.der = None
         self.current_filename = None

@@ -34,7 +34,8 @@ joblib
 memoized-property
 termcolor
 ffmpeg-python
-shutil
+pytest-shutil
+python-multipart
 
 # pyannote
 pyannote.audio
@@ -43,7 +44,6 @@ pyannote.core
 
 #audio
 pydub
-ffmpeg
 wave
 
 #azure
