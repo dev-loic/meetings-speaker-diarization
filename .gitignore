@@ -10,3 +10,4 @@ test_tensors.pt
 **/__pycache__/*
 notebooks/martin/data/*.wav
 notebooks/martin/outputs/*.rttm
+API_deploy_MSD.ipynb
